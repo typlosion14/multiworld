@@ -145,7 +145,7 @@ public class MultiworldMod {
 					}
 					for (File fi : f.listFiles()) {
 						String id = f.getName() + ":" + fi.getName().replace(".yml", "");
-						LOGGER.info("Found saved world " + id);
+						LOGGER.info("Found legacy saved world " + id);
 						CreateCommand.reinit_world_from_config(mc, id);
 					}
 				}
@@ -207,7 +207,11 @@ public class MultiworldMod {
     public static void register_commands(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(literal(CMD)
                     .requires(source -> {
-                        try {
+                    	// #if mc182
+                        // if (net.fabricmc.loader.api.FabricLoader.getInstance().isDevelopmentEnvironment()) return true;
+                        // #endif
+                    	
+                    	try {
                             return Perm.has(get_player(source), "multiworld.cmd") ||
                                     Perm.has(get_player(source), "multiworld.admin") || permissionLevel(source, 1);
                         } catch (Exception e) {

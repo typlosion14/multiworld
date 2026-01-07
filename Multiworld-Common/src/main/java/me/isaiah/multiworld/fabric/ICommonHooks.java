@@ -39,8 +39,12 @@ public class ICommonHooks {
 	
 	public static World getWorld(PlayerEntity player) {
 		try {
+			// #if mc182
+			// // empty
+			// #else
 			World world = ((me.isaiah.common.cmixin.IMixinEntity) player).ic$getWorld();
 			return world;
+			// #endif
 		} catch (Exception | NoSuchMethodError ex) {
 			// Older version of iCommonLib
 		}
@@ -67,13 +71,16 @@ public class ICommonHooks {
         MultiworldMod.LOGGER.info("Multiworld: Registered '" + r + "' iCommon events.");
 	}
 	
+	// #if mc182
+	// // TODO: 1.18.2 icommon portal enter event
+	// #else
 	@EventHandler
 	public void onPortalEnter(EntityPortalCollideEvent ev) {
 		if (!(ev.getEntity() instanceof ServerPlayerEntity)) {
 			return;
 		}
 		
-		// Check if portal
+		// // Check if portal
 		
 		boolean is_our_portal = true;
 		
@@ -82,8 +89,6 @@ public class ICommonHooks {
 
 		if (is_our_portal) {
 			for (Portal p : PortalCommand.KNOWN_PORTALS.values()) {
-				// boolean canPos = p.blocks.contains(pos);
-				
 				BlockPos min = p.getMinPos();
 				BlockPos max = p.getMaxPos();
 
@@ -111,5 +116,6 @@ public class ICommonHooks {
 			}
 		}
 	}
+	// #endif
 	
 }

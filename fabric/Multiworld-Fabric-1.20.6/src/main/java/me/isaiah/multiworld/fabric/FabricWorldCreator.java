@@ -1,6 +1,7 @@
 package me.isaiah.multiworld.fabric;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,8 @@ import com.mojang.serialization.Dynamic;
 import dimapi.FabricDimensionInternals;
 import me.isaiah.multiworld.ICreator;
 import me.isaiah.multiworld.MultiworldMod;
+import me.isaiah.multiworld.Utils;
+import multiworld.api.WorldFolderMode;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -25,6 +28,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.path.SymlinkValidationException;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.SaveProperties;
@@ -88,30 +92,63 @@ public class FabricWorldCreator implements ICreator {
         return world;
     }
     
+    /**
+     * Reads the gamerules from a level.dat file in the given world folder.
+     * @param savesDir Path to the root saves directory (e.g. ./saves).
+     * @param worldName Name of the world folder.
+     * @param dataFixer The server's DataFixer instance.
+     * @return A GameRules object containing the rules from level.dat.
+     * @throws IOException if the file cannot be read.
+     * @throws SymlinkValidationException 
+     */
     public static GameRules readGameRules(Identifier id) throws IOException {
+    	try {
+			return mw$readGameRules(MultiworldMod.mc, id);
+		} catch (IOException | SymlinkValidationException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			throw new IOException(e);
+		}
+    }
+    
+    /**
+     * Reads gamerules from a world's level.dat
+     */
+    public static GameRules mw$readGameRules(MinecraftServer server, Identifier worldId)
+            throws IOException, SymlinkValidationException {
 
-        try (Session session = MultiworldWorld.mw$getSession(MultiworldMod.mc, id)) {
+        String name = Utils.getWorldName(worldId);
+        Path customWorldPath = Utils.getWorldStoragePath();
+
+        Optional<WorldFolderMode> mode = Utils.getFolderMode(worldId);
+        if (!mode.isEmpty()) {
+        	customWorldPath = Utils.getWorldPath(worldId, mode.get()).getParent();
+        
+	        if (mode.get() == WorldFolderMode.VANILLA) {
+	        	name = worldId.getPath();
+	        }
+        }
+        
+        LevelStorage storage = LevelStorage.create(customWorldPath);
+
+        try (Session session = storage.createSession(name)) {
             Dynamic<?> dynamic = session.readLevelProperties();
-            
-            RegistryWrapper.WrapperLookup lookup = MultiworldMod.mc.getRegistryManager();
-            
-            Registry<DimensionOptions> dimensionRegistry = MultiworldMod.mc.getRegistryManager().get(RegistryKeys.DIMENSION);
-            
-            DataConfiguration dataConfig = MultiworldMod.mc.getSaveProperties().getDataConfiguration();
+
+            Registry<DimensionOptions> dimensionRegistry = server.getRegistryManager().get(RegistryKeys.DIMENSION);
+            DataConfiguration dataConfig = server.getSaveProperties().getDataConfiguration();
 
             SaveProperties props = LevelStorage.parseSaveProperties(
                 dynamic,
                 dataConfig,
                 dimensionRegistry,
-                MultiworldMod.mc.getRegistryManager()
+                server.getRegistryManager()
             ).properties();
-            
+
             if (!(props instanceof LevelProperties levelProps)) {
                 throw new IllegalStateException("SaveProperties is not a LevelProperties");
             }
-            
-            session.close();
-            // Return the gamerules object
+
+            // Return the gamerules directly
             return levelProps.getGameRules();
         }
     }

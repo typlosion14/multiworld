@@ -51,21 +51,21 @@ dependencies {
 	
 	include("xyz.nucleoid:fantasy:0.4.7+1.18.2")
 	modImplementation("xyz.nucleoid:fantasy:0.4.7+1.18.2")
-	modImplementation("curse.maven:cyber-permissions-407695:4640544")
+	compileOnly("curse.maven:cyber-permissions-407695:4640544")
 	modImplementation("me.lucko:fabric-permissions-api:0.2-SNAPSHOT")
 	modImplementation("net.fabricmc.fabric-api:fabric-api:0.76.0+1.18.2")
 	// modImplementation("net.fabricmc.fabric-api:fabric-api-deprecated:0.76.0+1.18.2")
 	
 	val ic = DefaultExternalModuleDependency(
 		"com.javazilla.mods",
-		"icommon-fabric-1.21.4",
-		"1.21.4",
+		"icommon-fabric-1.18.2",
+		"1.18.2",
 		null
 	).apply {
 		isChanging = true // Make sure we get the latest version of iCommon
 	}
 
-	modImplementation(ic)
+	compileOnly(ic)
 }
 
 // Jabel

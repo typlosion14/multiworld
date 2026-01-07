@@ -251,7 +251,7 @@ public class Utils {
 	}
 
  	public static Path getWorldStoragePath() {
- 		return getWorldStoragePath(MultiworldMod.mc);
+ 		return getWorldStoragePath(MultiworldMod.mc, WorldFolderMode.VANILLA);
  	}
  	
  	public static Path getWorldStoragePath(MinecraftServer server, WorldFolderMode mode) {
@@ -290,6 +290,7 @@ public class Utils {
  		*/
  	}
  	
+ 	@Deprecated
  	public static Path getWorldStoragePath(MinecraftServer server) {
  		Path overworld = ((MinecraftServerAccess) server).getSession().getWorldDirectory(World.OVERWORLD); 
  		
@@ -352,11 +353,15 @@ public class Utils {
  		return searchForWorlds(storage);
  	}
 
+ 	/**
+ 	 * @param storage - Directory
+ 	 * @return List of Path to found worlds
+ 	 */
  	public static List<Path> searchForWorlds(Path storage) {
  		List<Path> worldPaths = new ArrayList<>(); 
  		
- 		System.out.println("DEBUG: " + storage);
- 		
+ 		MultiworldMod.LOGGER.info("Searching for Worlds in: " + storage);
+
  		File fold = storage.toFile();
  		
  		if (!fold.exists()) {
@@ -368,16 +373,18 @@ public class Utils {
  			if (!f.isDirectory()) {
  				continue;
  			}
- 			
+
  			Path dirPath = storage.resolve(f.getName());
- 			
+
  			// File levelData = new File(f, "level.dat");
  			File multiworldConfig = new File(f, "multiworld-world.yml");
- 			
+
  			if (/*levelData.exists() ||*/ multiworldConfig.exists()) {
  				worldPaths.add(dirPath);
+ 				continue;
  			}
  			
+ 			worldPaths.addAll( searchForWorlds(f.toPath()) );
  		}
  		
  		return worldPaths;

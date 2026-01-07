@@ -27,13 +27,20 @@ public class PermFabric extends Perm {
 
     @Override
     public boolean has_impl(ServerPlayerEntity plr, String perm) {
-        boolean cyber = FabricLoader.getInstance().getModContainer("cyber-permissions").isPresent();
+        
+        // #if mc182
+        // if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+        //	return true;
+        // }
+        // #endif
+    	
+    	boolean cyber = FabricLoader.getInstance().getModContainer("cyber-permissions").isPresent();
         boolean luck =  FabricLoader.getInstance().getModContainer("fabric-permissions-api-v0").isPresent();
         
         boolean res = Perm.permissionLevel(plr, 2); // plr.hasPermissionLevel(2);
 
         if (cyber) {
-            if (CyberHandler.hasPermission(plr, perm)) res = true;
+        	// if (CyberHandler.hasPermission(plr, perm)) res = true;
         }
 
         if (luck) {

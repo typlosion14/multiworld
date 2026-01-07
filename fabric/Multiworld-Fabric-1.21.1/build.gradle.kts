@@ -37,7 +37,6 @@ configurations.all {
     }
 }
 
-
 dependencies {
 
 	annotationProcessor("com.pkware.jabel:jabel-javac-plugin:1.0.1-1")
@@ -54,6 +53,7 @@ dependencies {
 	modImplementation("me.lucko:fabric-permissions-api:0.2-SNAPSHOT")
 	// modImplementation("net.fabricmc.fabric-api:fabric-api-deprecated:0.100.1+1.21")
 	
+	 modImplementation("net.fabricmc.fabric-api:fabric-api:0.103.0+1.21.1")
 	
 	setOf(
 		"fabric-api-base",
@@ -69,8 +69,8 @@ dependencies {
 	
 	val ic = DefaultExternalModuleDependency(
 		"com.javazilla.mods",
-		"icommon-fabric-1.21.8",
-		"1.21.8",
+		"icommon-fabric-1.21.1",
+		"1.21.1",
 		null
 	).apply {
 		isChanging = true // Make sure we get the latest version of iCommon
