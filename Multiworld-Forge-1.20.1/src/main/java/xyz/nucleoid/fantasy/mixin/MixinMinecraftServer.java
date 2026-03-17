@@ -25,18 +25,6 @@ import xyz.nucleoid.fantasy.util.SafeIterator;
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer implements IMC {
 
-	// The locals you have to manage for an inject are insane. And do it twice. A redirect is much cleaner.
-		// Here is what it looks like with an inject: https://gist.github.com/i509VCB/f80077cc536eb4dba62b794eba5611c1
-	@Redirect(method = "createWorlds", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
-	private <K, V> V onLoadWorld(Map<K, V> worlds, K registryKey, V serverWorld) {
-		final V result = worlds.put(registryKey, serverWorld);
-		// ServerWorldEvents.LOAD.invoker().onWorldLoad((MinecraftServer) (Object) this, (ServerWorld) serverWorld);
-		
-		// System.out.println("LOADING WORLD!: " + registryKey);
-
-		return result;
-	}
-	
 	@Redirect(method = "tickWorlds", at = @At(value = "INVOKE", target = "Ljava/lang/Iterable;iterator()Ljava/util/Iterator;", ordinal = 0), require = 0)
 	private Iterator<ServerWorld> fantasy$copyBeforeTicking(Iterable<ServerWorld> instance) {
 		return new SafeIterator<>((Collection<ServerWorld>) instance);
