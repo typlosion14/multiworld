@@ -25,6 +25,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.isaiah.multiworld.command.CreateCommand;
 import me.isaiah.multiworld.command.DifficultyCommand;
 import me.isaiah.multiworld.command.IGameruleCommand;
+import me.isaiah.multiworld.command.InfoCommand;
 import me.isaiah.multiworld.command.PortalCommand;
 import me.isaiah.multiworld.command.SetspawnCommand;
 import me.isaiah.multiworld.command.SpawnCommand;
@@ -68,7 +69,8 @@ public class MultiworldMod {
     		"&a/mw gamerule <rule> <value>&r - Change a worlds Gamerules",
     		"&a/mw create <id> <env> [-g=<generator> -s=<seed>]&r - create a new world",
     		"&a/mw difficulty <value> [world id] - Sets the difficulty of a world",
-    		"&a/mw time <set|add|query> <time> [world id]&r - Change a world's time of day"
+    		"&a/mw time <set|add|query> <time> [world id]&r - Change a world's time of day",
+    		"&a/mw info [world id]&r - Show info about a world (players, time, weather, gamerules, spawn)"
     };
 
 	// Multiworld Mod Version
@@ -216,6 +218,7 @@ public class MultiworldMod {
     	"multiworld.gamerule",
     	"multiworld.difficulty",
     	"multiworld.time",
+    	"multiworld.info",
     	"multiworld.tp",
     	"multiworld.create",
     	"multiworld.portal"
@@ -343,6 +346,11 @@ public class MultiworldMod {
         // Time Command
         if (args[0].equalsIgnoreCase("time") && Perm.check(plr, "multiworld.time")) {
         	return TimeCommand.run(mc, plr, args);
+        }
+
+        // Info Command
+        if (args[0].equalsIgnoreCase("info") && Perm.check(plr, "multiworld.info")) {
+        	return InfoCommand.run(mc, plr, args);
         }
 
         // TP Command

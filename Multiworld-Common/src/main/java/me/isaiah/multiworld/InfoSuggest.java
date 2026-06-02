@@ -46,7 +46,7 @@ public class InfoSuggest implements SuggestionProvider<ServerCommandSource> {
 	 * Valid Subcommands
 	 */
 	private static String[] subcommands = {
-			"tp", "list", "version", "create", "spawn", "setspawn", "gamerule", "help", "difficulty", "time", "portal"
+			"tp", "list", "version", "create", "spawn", "setspawn", "gamerule", "help", "difficulty", "time", "info", "portal"
 			// TODO: Add: delete, load, unload, info, clone, who, import
 	};
 	
@@ -129,6 +129,11 @@ public class InfoSuggest implements SuggestionProvider<ServerCommandSource> {
                  	}
                 }
                 return builder.buildFuture();
+            }
+
+            if (cmds[1].equalsIgnoreCase("info") && (ALL || Perm.has(plr, "multiworld.info"))) {
+            	for (String s : getWorldNames()) builder.suggest(s);
+            	return builder.buildFuture();
             }
 
             if (cmds[1].equalsIgnoreCase("portal")) {
