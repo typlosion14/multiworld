@@ -28,6 +28,7 @@ import me.isaiah.multiworld.command.IGameruleCommand;
 import me.isaiah.multiworld.command.PortalCommand;
 import me.isaiah.multiworld.command.SetspawnCommand;
 import me.isaiah.multiworld.command.SpawnCommand;
+import me.isaiah.multiworld.command.TimeCommand;
 import me.isaiah.multiworld.command.TpCommand;
 import me.isaiah.multiworld.command.Util;
 import me.isaiah.multiworld.perm.Perm;
@@ -66,7 +67,8 @@ public class MultiworldMod {
     		"&a/mw list&r - List all worlds",
     		"&a/mw gamerule <rule> <value>&r - Change a worlds Gamerules",
     		"&a/mw create <id> <env> [-g=<generator> -s=<seed>]&r - create a new world",
-    		"&a/mw difficulty <value> [world id] - Sets the difficulty of a world"
+    		"&a/mw difficulty <value> [world id] - Sets the difficulty of a world",
+    		"&a/mw time <set|add|query> <time> [world id]&r - Change a world's time of day"
     };
 
 	// Multiworld Mod Version
@@ -213,6 +215,7 @@ public class MultiworldMod {
     	"multiworld.spawn",
     	"multiworld.gamerule",
     	"multiworld.difficulty",
+    	"multiworld.time",
     	"multiworld.tp",
     	"multiworld.create",
     	"multiworld.portal"
@@ -335,6 +338,11 @@ public class MultiworldMod {
         // Difficulty Command
         if (args[0].equalsIgnoreCase("difficulty") && Perm.check(plr, "multiworld.difficulty")) {
         	return DifficultyCommand.run(mc, plr, args);
+        }
+
+        // Time Command
+        if (args[0].equalsIgnoreCase("time") && Perm.check(plr, "multiworld.time")) {
+        	return TimeCommand.run(mc, plr, args);
         }
 
         // TP Command

@@ -36,10 +36,17 @@ public class InfoSuggest implements SuggestionProvider<ServerCommandSource> {
 	};
 
 	/**
+	 * Valid Time Actions
+	 */
+	public static String[] time_actions = {
+			"set", "add", "query"
+	};
+
+	/**
 	 * Valid Subcommands
 	 */
 	private static String[] subcommands = {
-			"tp", "list", "version", "create", "spawn", "setspawn", "gamerule", "help", "difficulty", "portal"
+			"tp", "list", "version", "create", "spawn", "setspawn", "gamerule", "help", "difficulty", "time", "portal"
 			// TODO: Add: delete, load, unload, info, clone, who, import
 	};
 	
@@ -114,6 +121,16 @@ public class InfoSuggest implements SuggestionProvider<ServerCommandSource> {
                 return builder.buildFuture();
             }
             
+            if (cmds[1].equalsIgnoreCase("time") && (ALL || Perm.has(plr, "multiworld.time"))) {
+            	String last = input.substring(input.lastIndexOf(' ')).trim();
+            	for (String name : time_actions) {
+                 	if (name.startsWith(last) || last.contains("time") || name.toLowerCase().contains(last)) {
+                 		builder.suggest(name);
+                 	}
+                }
+                return builder.buildFuture();
+            }
+
             if (cmds[1].equalsIgnoreCase("portal")) {
             	for (String s : PortalCommand.SUBCOMMANDS) {
                     builder.suggest(s);
@@ -140,6 +157,26 @@ public class InfoSuggest implements SuggestionProvider<ServerCommandSource> {
                  });
                 for (String s : names) builder.suggest(s);
             }
+
+            // Time value (argument 3): query types or named times.
+            if (cmds[1].equalsIgnoreCase("time") && (ALL || Perm.has(plr, "multiworld.time")) ) {
+            	if (cmds[2].equalsIgnoreCase("query")) {
+            		builder.suggest("daytime");
+            		builder.suggest("gametime");
+            		builder.suggest("day");
+            	} else {
+            		builder.suggest("day");
+            		builder.suggest("noon");
+            		builder.suggest("night");
+            		builder.suggest("midnight");
+            	}
+            }
+        }
+
+        // Time world id (argument 4)
+        if (cmds[1].equalsIgnoreCase("time") && (ALL || Perm.has(plr, "multiworld.time"))
+        		&& (cmds.length <= 4 || (cmds.length <= 5 && !input.endsWith(" "))) && cmds.length >= 4) {
+        	for (String s : getWorldNames()) builder.suggest(s);
         }
 
         // Create Command
